@@ -1,0 +1,4 @@
+libvikingcoinqt_a-winshutdownmonitor.o: winshutdownmonitor.cpp \
+ winshutdownmonitor.h
+
+winshutdownmonitor.h:
