@@ -3531,7 +3531,7 @@ fi
 
 
 
-ac_config_headers="$ac_config_headers src/vikingcoin-config.h"
+ac_config_headers="$ac_config_headers config/vikingcoin-config.h"
 
 
 ac_ext=cpp
