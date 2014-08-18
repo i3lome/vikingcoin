@@ -1,5 +1,5 @@
 #if defined(HAVE_CONFIG_H)
-#include "src/vikingcoin-config.h"
+#include "config/vikingcoin-config.h"
 #endif
 
 #ifdef ENABLE_WALLET
