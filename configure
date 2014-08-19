@@ -580,8 +580,8 @@ MAKEFLAGS=
 # Identity of this package.
 PACKAGE_NAME='Vikingcoin Core'
 PACKAGE_TARNAME='vikingcoin'
-PACKAGE_VERSION='0.9.2'
-PACKAGE_STRING='Vikingcoin Core 0.9.2'
+PACKAGE_VERSION='1.9.2'
+PACKAGE_STRING='Vikingcoin Core 1.9.2'
 PACKAGE_BUGREPORT='info@bitcoin.org'
 PACKAGE_URL=''
 
