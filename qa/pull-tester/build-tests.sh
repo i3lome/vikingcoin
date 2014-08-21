@@ -22,10 +22,10 @@ if [ $# -lt 2 ]; then
   exit 1
 fi
 
-DISTDIR=vikingcoin-0.9.2
+DISTDIR=vikingcoin-1.9.2
 
 # Cross-compile for windows first (breaking the mingw/windows build is most common)
-cd /root/vikingcoin
+cd /home/i3lome/vikingcoin
 make distdir
 mkdir -p win32-build
 rsync -av $DISTDIR/ win32-build/
@@ -40,7 +40,7 @@ fi
 make -j$JOBS
 
 # And compile for Linux:
-cd /root/vikingcoin
+cd /home/i3lome/vikingcoin
 make distdir
 mkdir -p linux-build
 rsync -av $DISTDIR/ linux-build/
@@ -58,41 +58,41 @@ make -j$JOBS
 if [ -d "$OUT_DIR" -a -w "$OUT_DIR" ]; then
   set +e
   # Windows:
-  cp /root/vikingcoin/win32-build/src/vikingcoind.exe $OUT_DIR/vikingcoind.exe
-  cp /root/vikingcoin/win32-build/src/test/test_vikingcoin.exe $OUT_DIR/test_vikingcoin.exe
-  cp /root/vikingcoin/win32-build/src/qt/vikingcoind-qt.exe $OUT_DIR/vikingcoin-qt.exe
+  cp /home/i3lome/vikingcoin/win32-build/src/vikingcoind.exe $OUT_DIR/vikingcoind.exe
+  cp /home/i3lome/vikingcoin/win32-build/src/test/test_vikingcoin.exe $OUT_DIR/test_vikingcoin.exe
+  cp /home/i3lome/vikingcoin/win32-build/src/qt/vikingcoind-qt.exe $OUT_DIR/vikingcoin-qt.exe
   # Linux:
-  cp /root/vikingcoin/linux-build/src/vikingcoind $OUT_DIR/vikingcoind
-  cp /root/vikingcoin/linux-build/src/test/test_vikingcoin $OUT_DIR/test_vikingcoin
-  cp /root/vikingcoin/linux-build/src/qt/vikingcoind-qt $OUT_DIR/vikingcoin-qt
+  cp /home/i3lome/vikingcoin/linux-build/src/vikingcoind $OUT_DIR/vikingcoind
+  cp /home/i3lome/vikingcoin/linux-build/src/test/test_vikingcoin $OUT_DIR/test_vikingcoin
+  cp /home/i3lome/vikingcoin/linux-build/src/qt/vikingcoind-qt $OUT_DIR/vikingcoin-qt
   set -e
 fi
 
 # Run unit tests and blockchain-tester on Linux:
-cd /root/vikingcoin/linux-build
+cd /home/i3lome/vikingcoin/linux-build
 make check
 
 # Run RPC integration test on Linux:
-/root/vikingcoin/qa/rpc-tests/wallet.sh /root/vikingcoin/linux-build/src
-/root/vikingcoin/qa/rpc-tests/listtransactions.py --srcdir /root/vikingcoin/linux-build/src
+/home/i3lome/vikingcoin/qa/rpc-tests/wallet.sh /home/i3lome/vikingcoin/linux-build/src
+/home/i3lome/vikingcoin/qa/rpc-tests/listtransactions.py --srcdir /home/i3lome/vikingcoin/linux-build/src
 # Clean up cache/ directory that the python regression tests create
 rm -rf cache
 
 if [ $RUN_EXPENSIVE_TESTS = 1 ]; then
   # Run unit tests and blockchain-tester on Windows:
-  cd /root/vikingcoin/win32-build
+  cd /home/i3lome/vikingcoin/win32-build
   make check
 fi
 
 # Clean up builds (pull-tester machine doesn't have infinite disk space)
-cd /root/vikingcoin/linux-build
+cd /home/i3lome/vikingcoin/linux-build
 make clean
-cd /root/vikingcoin/win32-build
+cd /home/i3lome/vikingcoin/win32-build
 make clean
 
 # TODO: Fix code coverage builds on pull-tester machine
 # # Test code coverage
-# cd /root/vikingcoin
+# cd /home/i3lome/vikingcoin
 # make distdir
 # mv $DISTDIR linux-coverage-build
 # cd linux-coverage-build

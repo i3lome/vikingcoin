@@ -69,8 +69,9 @@ public:
         base58Prefixes[PUBKEY_ADDRESS] = list_of(70);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(132);
         base58Prefixes[SECRET_KEY] =     list_of(86);
-        base58Prefixes[EXT_PUBLIC_KEY] = list_of(0x04)(0x88)(0xB2)(0x1E);
-        base58Prefixes[EXT_SECRET_KEY] = list_of(0x04)(0x88)(0xAD)(0xE4);
+ 	base58Prefixes[EXT_PUBLIC_KEY] = list_of(70);
+	base58Prefixes[EXT_SECRET_KEY] = list_of(86);
+ 
 
         // Convert the pnSeeds array into usable address objects.
         for (unsigned int i = 0; i < ARRAYLEN(pnSeed); i++)
@@ -79,7 +80,7 @@ public:
             // it'll get a pile of addresses with newer timestamps.
             // Seed nodes are given a random 'last seen time' of between one and two
             // weeks ago.
-            const int64_t nOneWeek = 7*24*60*60;
+            const int64_t nOneWeek = 2*24*60*60;
             struct in_addr ip;
             memcpy(&ip, &pnSeed[i], sizeof(ip));
             CAddress addr(CService(ip, GetDefaultPort()));

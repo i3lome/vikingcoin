@@ -1,4 +1,6 @@
 libvikingcoinqt_a-winshutdownmonitor.o: winshutdownmonitor.cpp \
- winshutdownmonitor.h
+ /usr/include/stdc-predef.h winshutdownmonitor.h
+
+/usr/include/stdc-predef.h:
 
 winshutdownmonitor.h:

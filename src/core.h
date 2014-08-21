@@ -65,7 +65,7 @@ inline int GetAuxPowStartBlock()
     if (TestNet())
         return 0; // Always on testnet
     else
-        return 25000; // Never on prodnet
+        return 100000; // Never on prodnet
 }
 inline int GetOurChainID()
 {
@@ -73,7 +73,7 @@ inline int GetOurChainID()
 }
 
 /** No amount larger than this (in satoshi) is valid */
-static const int64_t MAX_MONEY = (int64_t)21000000 * (int64_t)1000*COIN;
+static const int64_t MAX_MONEY = (int64_t)5000*COIN;
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 
 /** An outpoint - a combination of a transaction hash and an index n into its vout */

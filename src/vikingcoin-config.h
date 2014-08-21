@@ -163,7 +163,7 @@
 #define HAVE_PTHREAD 1
 
 /* Have PTHREAD_PRIO_INHERIT. */
-/* #undef HAVE_PTHREAD_PRIO_INHERIT */
+#define HAVE_PTHREAD_PRIO_INHERIT 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -193,10 +193,10 @@
 #define HAVE_UNISTD_H 1
 
 /* Define this symbol if boost sleep works */
-#define HAVE_WORKING_BOOST_SLEEP 1
+/* #undef HAVE_WORKING_BOOST_SLEEP */
 
 /* Define this symbol if boost sleep_for works */
-/* #undef HAVE_WORKING_BOOST_SLEEP_FOR */
+#define HAVE_WORKING_BOOST_SLEEP_FOR 1
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "info@bitcoin.org"
@@ -205,7 +205,7 @@
 #define PACKAGE_NAME "Vikingcoin Core"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Vikingcoin Core 0.9.2"
+#define PACKAGE_STRING "Vikingcoin Core 1.9.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "vikingcoin"
@@ -214,7 +214,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.9.2"
+#define PACKAGE_VERSION "1.9.2"
 
 /* Define to necessary symbol if this constant uses a non-standard name on
    your system. */
