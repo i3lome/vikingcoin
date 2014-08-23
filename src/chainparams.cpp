@@ -119,10 +119,12 @@ public:
 
         // Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1400630400;
-        genesis.nNonce = 0;
+        genesis.nNonce = 2016973;
 
         //// debug print
         hashGenesisBlock = genesis.GetHash();
+	
+
         vFixedSeeds.clear();
         vSeeds.clear();
         // vSeeds.push_back(CDNSSeedData("Viking.test", "test.Viking.org"));
@@ -151,14 +153,19 @@ public:
         nSubsidyHalvingInterval = 150;
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 1);
         genesis.nTime = 1296688602;
-        genesis.nBits = 0x207fffff;
-        genesis.nNonce = 3;
+        genesis.nBits = 0x1e0fffff;
+        genesis.nNonce = 0;
         hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 18444;
         strDataDir = "regtest";
 
         //// debug print
         hashGenesisBlock = genesis.GetHash();
+         while (hashGenesisBlock > bnProofOfWorkLimit.getuint256()){
+             if (++genesis.nNonce==0) break;
+             hashGenesisBlock = genesis.GetHash();
+        }
+
 
         vSeeds.clear();  // Regtest mode doesn't have any DNS seeds.
 
