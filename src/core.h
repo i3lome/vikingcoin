@@ -63,9 +63,9 @@ enum BlockStatus {
 inline int GetAuxPowStartBlock()
 {
     if (TestNet())
-        return 0; // Always on testnet
+        return 100; // Always on testnet
     else
-        return 10; // Never on prodnet
+        return 100000; // Never on prodnet
 }
 inline int GetOurChainID()
 {
