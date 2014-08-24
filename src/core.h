@@ -65,11 +65,11 @@ inline int GetAuxPowStartBlock()
     if (TestNet())
         return 0; // Always on testnet
     else
-        return 100000; // Never on prodnet
+        return 10; // Never on prodnet
 }
 inline int GetOurChainID()
 {
-    return 0x0004;
+    return 0x0005;
 }
 
 /** No amount larger than this (in satoshi) is valid */
