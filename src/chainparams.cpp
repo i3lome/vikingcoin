@@ -116,6 +116,7 @@ public:
         nDefaultPort = 54321;
         nRPCPort = 54442;
         strDataDir = "testnet";
+        bnProofOfWorkLimit = CBigNum(~uint256(0) >> 20);
 
         // Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1400630400;
