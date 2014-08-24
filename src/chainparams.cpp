@@ -117,6 +117,7 @@ public:
         nRPCPort = 54442;
         strDataDir = "testnet";
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 20);
+        vAlertPubKey = ParseHex("04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284");
 
         // Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1400630400;
