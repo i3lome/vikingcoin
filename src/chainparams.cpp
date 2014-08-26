@@ -66,11 +66,10 @@ public:
         vSeeds.push_back(CDNSSeedData("108.61.10.90", "192.241.199.243"));
 
 
-        base58Prefixes[PUBKEY_ADDRESS] = list_of(70);
-        base58Prefixes[SCRIPT_ADDRESS] = list_of(132);
-        base58Prefixes[SECRET_KEY] =     list_of(86);
- 	base58Prefixes[EXT_PUBLIC_KEY] = list_of(70);
-	base58Prefixes[EXT_SECRET_KEY] = list_of(86);
+        base58Prefixes[PUBKEY_ADDRESS] = 70;
+        base58Prefixes[SCRIPT_ADDRESS] = 132;
+        base58Prefixes[SECRET_KEY] =     86;
+ 	
  
 
         // Convert the pnSeeds array into usable address objects.
@@ -131,11 +130,9 @@ public:
         vSeeds.clear();
         // vSeeds.push_back(CDNSSeedData("Viking.test", "test.Viking.org"));
 
-        base58Prefixes[PUBKEY_ADDRESS] = list_of(74);
-        base58Prefixes[SCRIPT_ADDRESS] = list_of(132);
-        base58Prefixes[SECRET_KEY] =     list_of(86);
- 	base58Prefixes[EXT_PUBLIC_KEY] = list_of(70);
-	base58Prefixes[EXT_SECRET_KEY] = list_of(82);
+        base58Prefixes[PUBKEY_ADDRESS] = 74;
+        base58Prefixes[SCRIPT_ADDRESS] = 132;
+        base58Prefixes[SECRET_KEY] =     82;
     }
     virtual Network NetworkID() const { return CChainParams::TESTNET; }
 };
