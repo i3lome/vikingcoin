@@ -1,237 +1,141 @@
-// Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "assert.h"
+#include <boost/assign/list_of.hpp> // for 'map_list_of()'
+#include <boost/foreach.hpp>
 
-#include "chainparams.h"
-#include "core.h"
-#include "protocol.h"
-#include "util.h"
+#include "checkpoints.h"
 
-//
-// Main network
-//
+#include "main.h"
+#include "uint256.h"
 
-
-unsigned int pnSeed[] =
+namespace Checkpoints
 {
-    0x12345678
-};
+    typedef std::map<int, uint256> MapCheckpoints;
 
-class CMainParams : public CChainParams {
-public:
-    CMainParams() {
-        // The message start string is designed to be unlikely to occur in normal data.
-        pchMessageStart[0] = 0x55;
-        pchMessageStart[1] = 0x42;
-        pchMessageStart[2] = 0x4B;
-        pchMessageStart[3] = 0x45;
-        nDefaultPort = 11066;
-        nRPCPort = 11067;
-        bnProofOfWorkLimit = CBigNum(~uint256(0) >> 20);
-        nSubsidyHalvingInterval = 100000;
+    // How many times we expect transactions after the last checkpoint to
+    // be slower. This number is a compromise, as it can't be accurate for
+    // every system. When reindexing from a fast disk with a slow CPU, it
+    // can be up to 20, while when downloading from a slow network with a
+    // fast multicore CPU, it won't be much higher than 1.
+    static const double fSigcheckVerificationFactor = 5.0;
 
-        // Build the genesis block. Note that the output of the genesis coinbase cannot
-        // be spent as it did not originally exist in the database.
-  
-        const char* pszTimestamp = "Viking Era";
-        CTransaction txNew;
-        txNew.vin.resize(1);
-        txNew.vout.resize(1);
-        txNew.vin[0].scriptSig = CScript() << 486604799 << CBigNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-        txNew.vout[0].nValue = 0.001 * COIN;
-        txNew.vout[0].scriptPubKey = CScript() << ParseHex("") << OP_CHECKSIG;
-        genesis.vtx.push_back(txNew);
-        genesis.hashPrevBlock = 0;
-        genesis.hashMerkleRoot = genesis.BuildMerkleTree();
-        genesis.nVersion = 1;
-        genesis.nTime    = 1400630400; //nTime
-        genesis.nBits    = 0x1e0fffff;
-        genesis.nNonce   = 2016973;
-        
-        hashGenesisBlock = genesis.GetHash();
-        // while (hashGenesisBlock > bnProofOfWorkLimit.getuint256()){
-        //     if (++genesis.nNonce==0) break;
-        //     hashGenesisBlock = genesis.GetHash();
-        //}
+    struct CCheckpointData {
+        const MapCheckpoints *mapCheckpoints;
+        int64 nTimeLastCheckpoint;
+        int64 nTransactionsLastCheckpoint;
+        double fTransactionsPerDay;
+    };
 
+    bool fEnabled = true;
 
-        printf("%s\n", hashGenesisBlock.ToString().c_str());
-        printf("%s\n", genesis.hashMerkleRoot.ToString().c_str());
-        printf("%x\n", bnProofOfWorkLimit.GetCompact());
-        genesis.print();
-        
-        
-        assert(hashGenesisBlock == uint256("0x00000c07c30a4f74683e64ed156668e3f8d2e71bb4efcdcc44c248708d1cabf2"));
-        assert(genesis.hashMerkleRoot == uint256("0xb8b26c88ea01ea6cbbd9fd39158f1e6cae130cc2cd5950b78727d83aa71c056d"));
+    // What makes a good checkpoint block?
+    // + Is surrounded by blocks with reasonable timestamps
+    //   (no blocks before with a timestamp after, none after with
+    //    timestamp before)
+    // + Contains no strange transactions
+    static MapCheckpoints mapCheckpoints =
+        boost::assign::map_list_of
+        ( 0,     uint256("0x00000c07c30a4f74683e64ed156668e3f8d2e71bb4efcdcc44c248708d1cabf2"))
+	( 13083,     uint256("0x000000000002d264461381aa93918273184d86a6fc46f5f236b20ccda1810758"))
+	( 36505,     uint256("0x000000000000f38db8046c37383c98ac40dd250df084f674f6c0f9e1de7cf930"))
 
-        vSeeds.push_back(CDNSSeedData("198.46.134.15", "192.3.10.93"));
-		vSeeds.push_back(CDNSSeedData("95.85.46.218", "81.11.246.44"));
-        vSeeds.push_back(CDNSSeedData("108.61.10.90", "192.241.199.243"));
-   
+        ;
+    static const CCheckpointData data = {
+        &mapCheckpoints,
+        1400630400, // * UNIX timestamp of last checkpoint block
+        1,          // * total number of transactions between genesis and last checkpoint
+                    //   (the tx=... number in the SetBestChain debug.log lines)
+        720         // * estimated number of transactions per day after checkpoint
+    };
 
-        base58Prefixes[PUBKEY_ADDRESS] = 70;
-        base58Prefixes[SCRIPT_ADDRESS] = 132;
-        base58Prefixes[SECRET_KEY] = 86;
+    static MapCheckpoints mapCheckpointsTestnet =
+        boost::assign::map_list_of
+        ( 0,     uint256("0x00000c07c30a4f74683e64ed156668e3f8d2e71bb4efcdcc44c248708d1cabf2"))
+        ;
+    static const CCheckpointData dataTestnet = {
+        &mapCheckpointsTestnet,
+        1400630400, // * UNIX timestamp of last checkpoint block
+        1,          // * total number of transactions between genesis and last checkpoint
+                    //   (the tx=... number in the SetBestChain debug.log lines)
+        720  
+    };
 
-        // Convert the pnSeeds array into usable address objects.
-        for (unsigned int i = 0; i < ARRAYLEN(pnSeed); i++)
-        {
-            // It'll only connect to one or two seed nodes because once it connects,
-            // it'll get a pile of addresses with newer timestamps.
-            // Seed nodes are given a random 'last seen time' 
-            const int64 nTwoDays = 2 * 24 * 60 * 60;
-            struct in_addr ip;
-            memcpy(&ip, &pnSeed[i], sizeof(ip));
-            CAddress addr(CService(ip, GetDefaultPort()));
-            addr.nTime = GetTime() - GetRand(nTwoDays) - nTwoDays;
-            vFixedSeeds.push_back(addr);
+    const CCheckpointData &Checkpoints() {
+        if (TestNet())
+            return dataTestnet;
+        else
+            return data;
+    }
+
+    bool CheckBlock(int nHeight, const uint256& hash)
+    {
+        if (!fEnabled)
+            return true;
+
+        const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
+
+        MapCheckpoints::const_iterator i = checkpoints.find(nHeight);
+        if (i == checkpoints.end()) return true;
+        return hash == i->second;
+    }
+
+    // Guess how far we are in the verification process at the given block index
+    double GuessVerificationProgress(CBlockIndex *pindex) {
+        if (pindex==NULL)
+            return 0.0;
+
+        int64 nNow = time(NULL);
+
+        double fWorkBefore = 0.0; // Amount of work done before pindex
+        double fWorkAfter = 0.0;  // Amount of work left after pindex (estimated)
+        // Work is defined as: 1.0 per transaction before the last checkoint, and
+        // fSigcheckVerificationFactor per transaction after.
+
+        const CCheckpointData &data = Checkpoints();
+
+        if (pindex->nChainTx <= data.nTransactionsLastCheckpoint) {
+            double nCheapBefore = pindex->nChainTx;
+            double nCheapAfter = data.nTransactionsLastCheckpoint - pindex->nChainTx;
+            double nExpensiveAfter = (nNow - data.nTimeLastCheckpoint)/86400.0*data.fTransactionsPerDay;
+            fWorkBefore = nCheapBefore;
+            fWorkAfter = nCheapAfter + nExpensiveAfter*fSigcheckVerificationFactor;
+        } else {
+            double nCheapBefore = data.nTransactionsLastCheckpoint;
+            double nExpensiveBefore = pindex->nChainTx - data.nTransactionsLastCheckpoint;
+            double nExpensiveAfter = (nNow - pindex->nTime)/86400.0*data.fTransactionsPerDay;
+            fWorkBefore = nCheapBefore + nExpensiveBefore*fSigcheckVerificationFactor;
+            fWorkAfter = nExpensiveAfter*fSigcheckVerificationFactor;
         }
+
+        return fWorkBefore / (fWorkBefore + fWorkAfter);
     }
 
-    virtual const CBlock& GenesisBlock() const { return genesis; }
-    virtual Network NetworkID() const { return CChainParams::MAIN; }
+    int GetTotalBlocksEstimate()
+    {
+        if (!fEnabled)
+            return 0;
 
-    virtual const vector<CAddress>& FixedSeeds() const {
-        return vFixedSeeds;
-    }
-protected:
-    CBlock genesis;
-    vector<CAddress> vFixedSeeds;
-};
-static CMainParams mainParams;
+        const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
 
-
-//
-// Testnet (v3)
-//
-class CTestNetParams : public CMainParams {
-public:
-    CTestNetParams() {
-        // The message start string is designed to be unlikely to occur in normal data.
-        pchMessageStart[0] = 0x01;
-        pchMessageStart[1] = 0x05;
-        pchMessageStart[2] = 0xfe;
-        pchMessageStart[3] = 0x05;
-        nDefaultPort = 54321;
-        nRPCPort = 54442;
-        strDataDir = "testnet";
-
-        // Modify the testnet genesis block so the timestamp is valid for a later start.
-        genesis.nTime = 1400630400;
-        genesis.nNonce = 2016973;
-        
-        
-        //// debug print
-        hashGenesisBlock = genesis.GetHash();
-         // while (hashGenesisBlock > bnProofOfWorkLimit.getuint256()){
-         //  if (++genesis.nNonce==0) break;
-         // hashGenesisBlock = genesis.GetHash();
-         //}
-        assert(hashGenesisBlock == uint256("0x00000c07c30a4f74683e64ed156668e3f8d2e71bb4efcdcc44c248708d1cabf2"));
-
-
-        printf("%s\n", hashGenesisBlock.ToString().c_str());
-        printf("%s\n", genesis.hashMerkleRoot.ToString().c_str());
-        genesis.print();
-
-        vFixedSeeds.clear();
-        vSeeds.clear();
-        // vSeeds.push_back(CDNSSeedData("Viking.test", "test.Viking.org"));
-
-        base58Prefixes[PUBKEY_ADDRESS] = 100;
-        base58Prefixes[SCRIPT_ADDRESS] = 10;
-        base58Prefixes[SECRET_KEY] = 210;
-
-    }
-    virtual Network NetworkID() const { return CChainParams::TESTNET; }
-};
-static CTestNetParams testNetParams;
-
-
-//
-// Regression test
-//
-class CRegTestParams : public CTestNetParams {
-public:
-    CRegTestParams() {
-        pchMessageStart[0] = 0xfa;
-        pchMessageStart[1] = 0x0f;
-        pchMessageStart[2] = 0xa5;
-        pchMessageStart[3] = 0x5a;
-        nSubsidyHalvingInterval = 150;
-        bnProofOfWorkLimit = CBigNum(~uint256(0) >> 1);
-        genesis.nTime = 1296688602;
-        genesis.nBits = 0x207fffff;
-        genesis.nNonce = 3;
-        hashGenesisBlock = genesis.GetHash();
-        nDefaultPort = 18444;
-        strDataDir = "regtest";
-        
-        //// debug print
-        hashGenesisBlock = genesis.GetHash();
-        //while (hashGenesisBlock > bnProofOfWorkLimit.getuint256()){
-        //    if (++genesis.nNonce==0) break;
-        //    hashGenesisBlock = genesis.GetHash();
-        //}
-
-        printf("%s\n", hashGenesisBlock.ToString().c_str());
-        printf("%s\n", genesis.hashMerkleRoot.ToString().c_str());
-        genesis.print();
-
-        // assert(hashGenesisBlock == uint256("0x13d8d31dde96874006da503dd2b63fa68c698dc823334359e417aa3a92f80433"));
-
-        vSeeds.clear();  // Regtest mode doesn't have any DNS seeds.
-
-        base58Prefixes[PUBKEY_ADDRESS] = 0;
-        base58Prefixes[SCRIPT_ADDRESS] = 5;
-        base58Prefixes[SECRET_KEY] = 128;
+        return checkpoints.rbegin()->first;
     }
 
-    virtual bool RequireRPCPassword() const { return false; }
-    virtual Network NetworkID() const { return CChainParams::REGTEST; }
-};
-static CRegTestParams regTestParams;
+    CBlockIndex* GetLastCheckpoint(const std::map<uint256, CBlockIndex*>& mapBlockIndex)
+    {
+        if (!fEnabled)
+            return NULL;
 
-static CChainParams *pCurrentParams = &mainParams;
+        const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
 
-const CChainParams &Params() {
-    return *pCurrentParams;
-}
-
-void SelectParams(CChainParams::Network network) {
-    switch (network) {
-        case CChainParams::MAIN:
-            pCurrentParams = &mainParams;
-            break;
-        case CChainParams::TESTNET:
-            pCurrentParams = &testNetParams;
-            break;
-        case CChainParams::REGTEST:
-            pCurrentParams = &regTestParams;
-            break;
-        default:
-            assert(false && "Unimplemented network");
-            return;
+        BOOST_REVERSE_FOREACH(const MapCheckpoints::value_type& i, checkpoints)
+        {
+            const uint256& hash = i.second;
+            std::map<uint256, CBlockIndex*>::const_iterator t = mapBlockIndex.find(hash);
+            if (t != mapBlockIndex.end())
+                return t->second;
+        }
+        return NULL;
     }
-}
-
-bool SelectParamsFromCommandLine() {
-    bool fRegTest = GetBoolArg("-regtest", false);
-    bool fTestNet = GetBoolArg("-testnet", false);
-
-    if (fTestNet && fRegTest) {
-        return false;
-    }
-
-    if (fRegTest) {
-        SelectParams(CChainParams::REGTEST);
-    } else if (fTestNet) {
-        SelectParams(CChainParams::TESTNET);
-    } else {
-        SelectParams(CChainParams::MAIN);
-    }
-    return true;
 }
