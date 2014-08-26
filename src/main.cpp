@@ -1488,6 +1488,9 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
         else {
          if (pindexLast->nHeight+1 >= 1000) { DiffMode = 2; } // Kimoto after 8 days
         }
+        else {
+         if (pindexLast->nHeight+1 >= 75000) { DiffMode = 1; } // Kimoto after 8 days
+        }
         
         if (DiffMode == 1) { return GetNextWorkRequired_V1(pindexLast, pblock); } // Legacy diff mode
         else if (DiffMode == 2) { return GetNextWorkRequired_V2(pindexLast, pblock); } // KGW
