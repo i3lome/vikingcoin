@@ -1482,13 +1482,12 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
 //Choose the right diffMode
 	
         int DiffMode = 1; // legacy diff-mode
-        if (TestNet()) {
-                if (pindexLast->nHeight+1 >= 120) { DiffMode = 2; } // First 8 days
+                if (pindexLast->nHeight+1 >= 12) { DiffMode = 2; } 
+			if (pindexLast->nHeight+1 >= 20) { DiffMode = 1; } 
         }
         else {
          if (pindexLast->nHeight+1 >= 1000) { DiffMode = 2; } // Kimoto after 8 days
-        }
-        else {
+        
          if (pindexLast->nHeight+1 >= 75000) { DiffMode = 1; } // Kimoto after 8 days
         }
         
