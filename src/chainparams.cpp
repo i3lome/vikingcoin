@@ -126,13 +126,12 @@ public:
         
         //// debug print
         hashGenesisBlock = genesis.GetHash();
-         // while (hashGenesisBlock > bnProofOfWorkLimit.getuint256()){
-         //  if (++genesis.nNonce==0) break;
-         // hashGenesisBlock = genesis.GetHash();
-        
-         //}
+         while (hashGenesisBlock > bnProofOfWorkLimit.getuint256()){
+           if (++genesis.nNonce==0) break;
+         hashGenesisBlock = genesis.GetHash();
+        }
          
-        assert(hashGenesisBlock == uint256("0x00000c07c30a4f74683e64ed156668e3f8d2e71bb4efcdcc44c248708d1cabf2"));
+        //assert(hashGenesisBlock == uint256("0x00000c07c30a4f74683e64ed156668e3f8d2e71bb4efcdcc44c248708d1cabf2"));
 
 
         printf("%s\n", hashGenesisBlock.ToString().c_str());
